@@ -91,7 +91,13 @@ export default function Reports({ user }) {
         to,
       });
 
+      console.log(
+        '🧩 days from backend:',
+        res.days.map(d => d.date)
+      );
+
       setDays(res.days || []);
+      console.log('📅 DAYS RAW FROM API', res.days);
       setCurrentWeek(0);
     } finally {
       setLoading(false);
@@ -223,6 +229,9 @@ export default function Reports({ user }) {
             const dateStr = toISODate(d);
 
             const dayData = week.daysMap.get(dateStr);
+            if (dayData?.incidents?.length) {
+              console.log('🟠 Incidents for day', dateStr, dayData.incidents);
+            }
 
             const isSameMonth = d.getMonth() === month;
 
@@ -364,6 +373,16 @@ export default function Reports({ user }) {
 
                   {/* incidencias */}
                   {incidents.map(i => {
+
+                    console.log('🔴 INCIDENT RAW', {
+                      id: i.id,
+                      type: i.type,
+                      occurredAt: i.occurredAt,
+                      createdAt: i.createdAt,
+                      jsDate: new Date(i.occurredAt || i.createdAt),
+                      hours: new Date(i.occurredAt || i.createdAt).getHours(),
+                      minutes: new Date(i.occurredAt || i.createdAt).getMinutes(),
+                    });
 
                     const t = new Date(i.occurredAt || i.createdAt);
                     const min = t.getHours() * 60 + t.getMinutes();

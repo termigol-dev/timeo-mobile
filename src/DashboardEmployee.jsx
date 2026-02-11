@@ -223,15 +223,6 @@ export default function DashboardEmployee({
         </button>
       </div>
 
-      <div style={{ marginTop: 20, textAlign: 'center' }}>
-        <button
-          className="employee-btn"
-          onClick={() => window.location.href = '/reports'}
-        >
-          Informes
-        </button>
-      </div>
-
       {/* HISTORIAL */}
       <div style={{ display: 'grid', gap: 12 }}>
         {loading ? (
