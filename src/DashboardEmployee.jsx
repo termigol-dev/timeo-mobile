@@ -19,6 +19,8 @@ export default function DashboardEmployee({
   useEffect(() => {
     loadHistory();
   }, []);
+  
+  console.log('👤 user in DashboardEmployee', user);
 
   async function loadHistory() {
     setLoading(true);
@@ -178,7 +180,7 @@ export default function DashboardEmployee({
       >
         {user?.photoUrl ? (
           <img
-            src={user.photoUrl}
+            src={user.photo}
             alt="Foto empleado"
             className="employee-photo"
           />
