@@ -180,7 +180,7 @@ export default function DashboardEmployee({
       >
         {user?.photoUrl ? (
           <img
-            src={user.photo}
+            src={user.photoUrl}
             alt="Foto empleado"
             className="employee-photo"
           />
