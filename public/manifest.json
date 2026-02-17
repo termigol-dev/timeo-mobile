@@ -1,0 +1,20 @@
+{
+  "name": "Timeo Mobile",
+  "short_name": "Timeo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#14b8a6",
+  "icons": [
+    {
+      "src": "/iconomovil192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/iconomovil512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
