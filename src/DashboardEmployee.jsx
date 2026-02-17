@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getMyRecords, recordIn, recordOut } from './api';
 import { useNavigate } from 'react-router-dom';
+import Logo from "./components/Logo";
 
 const font = `system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
 Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`;
@@ -19,7 +20,7 @@ export default function DashboardEmployee({
   useEffect(() => {
     loadHistory();
   }, []);
-  
+
   console.log('👤 user in DashboardEmployee', user);
 
   async function loadHistory() {
@@ -116,10 +117,13 @@ export default function DashboardEmployee({
           </button>
         </div>
 
-        <div className="logo logo-large">
-          t<span className="i">i</span>meo
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: 32
+        }}>
+          <Logo dark={dark} size={80} />
         </div>
-
         <div className="header-actions">
           <button
             className="header-btn"

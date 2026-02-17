@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { clearToken, getMyRecords } from './api.js';
+import Logo from "./components/Logo";
 
 export default function HomeEmployee({ dark, setDark, onLogout }) {
   const [records, setRecords] = useState([]);
@@ -8,7 +9,7 @@ export default function HomeEmployee({ dark, setDark, onLogout }) {
   useEffect(() => {
     getMyRecords()
       .then(r => setRecords(r.slice(0, 5)))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
@@ -22,8 +23,12 @@ export default function HomeEmployee({ dark, setDark, onLogout }) {
       {/* HEADER */}
       <header className="topbar">
         <div className="topbar-left">
-          <div className="logo">
-            t<span className="i">i</span>meo
+          <div style={{
+            display: "flex",
+            justifyContent: "center",
+            marginBottom: 32
+          }}>
+            <Logo dark={dark} size={80} />
           </div>
         </div>
 

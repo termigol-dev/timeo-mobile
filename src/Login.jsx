@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { login } from './api.js';
+import Logo from "./components/Logo";
 
 export default function Login({ onLogin, dark, setDark }) {
   const [email, setEmail] = useState('');
@@ -26,8 +27,12 @@ export default function Login({ onLogin, dark, setDark }) {
   return (
     <div className="centered">
       <form className="card form" onSubmit={submit}>
-        <div className="logo">
-          t<span className="i">i</span>meo
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: 32
+        }}>
+          <Logo dark={dark} size={150} />
         </div>
 
         <input
