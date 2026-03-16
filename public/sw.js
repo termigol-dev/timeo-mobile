@@ -1,6 +1,8 @@
 self.addEventListener("push", function (event) {
 
-  let data = { title: "Timeo", body: "Notificación recibida" };
+  console.log("PUSH EVENT RECEIVED");
+
+  let data = { title: "Timeo", body: "Push recibido" };
 
   if (event.data) {
     try {
@@ -17,4 +19,5 @@ self.addEventListener("push", function (event) {
       badge: "/icon-192.png"
     })
   );
+
 });
