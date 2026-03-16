@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from './Login.jsx';
@@ -19,38 +19,75 @@ export default function App() {
     localStorage.setItem('dark_mode', dark);
   }, [dark]);
 
-  function handleLogin(userFromBackend) {
+  /* -----------------------------
+     SUSCRIPCIÓN A PUSH
+  ----------------------------- */
 
-    console.log("LOGIN OK, registering device");
+  async function subscribeToPush() {
+
+    if (!("serviceWorker" in navigator)) return null;
+
+    const registration = await navigator.serviceWorker.ready;
+
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      console.log("Push permission denied");
+      return null;
+    }
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY
+    });
+
+    return subscription;
+  }
+
+  /* -----------------------------
+     LOGIN
+  ----------------------------- */
+
+  async function handleLogin(userFromBackend) {
+
+    console.log("LOGIN OK");
 
     setUser(userFromBackend);
 
-    let deviceToken = localStorage.getItem('deviceToken');
-
-    if (!deviceToken) {
-      deviceToken = crypto.randomUUID();
-      localStorage.setItem('deviceToken', deviceToken);
-    }
-
     const authToken = localStorage.getItem('token');
 
-    console.log("DEVICE TOKEN:", deviceToken);
+    try {
 
-    fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`
-      },
-      body: JSON.stringify({
-        token: deviceToken,
-        platform: 'WEB'
-      })
-    })
-      .then(res => res.json())
-      .then(data => console.log("DEVICE REGISTER RESPONSE:", data))
-      .catch(err => console.error("DEVICE REGISTER ERROR:", err));
+      const subscription = await subscribeToPush();
+
+      if (!subscription) return;
+
+      console.log("PUSH SUBSCRIPTION:", subscription);
+
+      await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          token: JSON.stringify(subscription),
+          platform: 'WEB'
+        })
+      });
+
+      console.log("DEVICE REGISTERED");
+
+    } catch (err) {
+
+      console.error("DEVICE REGISTER ERROR:", err);
+
+    }
   }
+
+  /* -----------------------------
+     LOGOUT
+  ----------------------------- */
 
   function handleLogout() {
     localStorage.removeItem('token');
@@ -58,38 +95,10 @@ export default function App() {
     setUser(null);
   }
 
-  // REGISTRAR DISPOSITIVO CUANDO EL USUARIO ESTÁ LOGUEADO
-  useEffect(() => {
+  /* -----------------------------
+     LOGIN SCREEN
+  ----------------------------- */
 
-    if (!user) return;
-
-    let deviceToken = localStorage.getItem('deviceToken');
-
-    if (!deviceToken) {
-      deviceToken = crypto.randomUUID();
-      localStorage.setItem('deviceToken', deviceToken);
-    }
-
-    const authToken = localStorage.getItem('token');
-    if (!authToken) return;
-
-    fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`
-      },
-      body: JSON.stringify({
-        token: deviceToken,
-        platform: 'WEB'
-      })
-    }).catch(err => {
-      console.error('Error registering device:', err);
-    });
-
-  }, [user]);
-
-  // LOGIN
   if (!user) {
     return (
       <Login
@@ -100,7 +109,10 @@ export default function App() {
     );
   }
 
-  // APP MÓVIL (sin roles)
+  /* -----------------------------
+     APP
+  ----------------------------- */
+
   return (
     <Routes>
 
