@@ -85,44 +85,48 @@ export default function App() {
 
   async function handleLogin(userFromBackend) {
 
-    console.log("LOGIN OK");
+  console.log("LOGIN OK");
 
-    setUser(userFromBackend);
+  const authToken = localStorage.getItem('token');
 
-    const authToken = localStorage.getItem("token");
-    if (!authToken) {
-      console.log("NO AUTH TOKEN");
+  try {
+
+    const subscription = await subscribeToPush();
+
+    if (!subscription) {
+      console.log("NO SUBSCRIPTION");
+      setUser(userFromBackend);
       return;
     }
 
-    try {
+    console.log("PUSH SUBSCRIPTION:", subscription);
 
-      const subscription = await subscribeToPush();
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
+      },
+      body: JSON.stringify({
+        token: JSON.stringify(subscription),
+        platform: 'WEB'
+      })
+    });
 
-      if (!subscription) return;
+    const data = await res.json();
 
-      console.log("PUSH SUBSCRIPTION:", subscription);
+    console.log("DEVICE REGISTERED:", data);
 
-      await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`
-        },
-        body: JSON.stringify({
-          token: JSON.stringify(subscription),
-          platform: 'WEB'
-        })
-      });
+    // 👇 IMPORTANTE: solo ahora activamos la app
+    setUser(userFromBackend);
 
-      console.log("DEVICE REGISTERED");
+  } catch (err) {
 
-    } catch (err) {
+    console.error("DEVICE REGISTER ERROR:", err);
+    setUser(userFromBackend);
 
-      console.error("DEVICE REGISTER ERROR:", err);
-
-    }
   }
+}
 
   /* -----------------------------
      LOGOUT
