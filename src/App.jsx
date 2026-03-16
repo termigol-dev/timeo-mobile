@@ -35,12 +35,12 @@ export default function App() {
       console.log("Push permission denied");
       return null;
     }
-
+    console.log("SUBSCRIBING TO PUSH");
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY
     });
-
+    console.log("SUBSCRIPTION CREATED", subscription);
     return subscription;
   }
 
