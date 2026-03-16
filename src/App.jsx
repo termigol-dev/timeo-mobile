@@ -20,7 +20,36 @@ export default function App() {
   }, [dark]);
 
   function handleLogin(userFromBackend) {
+
+    console.log("LOGIN OK, registering device");
+
     setUser(userFromBackend);
+
+    let deviceToken = localStorage.getItem('deviceToken');
+
+    if (!deviceToken) {
+      deviceToken = crypto.randomUUID();
+      localStorage.setItem('deviceToken', deviceToken);
+    }
+
+    const authToken = localStorage.getItem('token');
+
+    console.log("DEVICE TOKEN:", deviceToken);
+
+    fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
+      },
+      body: JSON.stringify({
+        token: deviceToken,
+        platform: 'WEB'
+      })
+    })
+      .then(res => res.json())
+      .then(data => console.log("DEVICE REGISTER RESPONSE:", data))
+      .catch(err => console.error("DEVICE REGISTER ERROR:", err));
   }
 
   function handleLogout() {
