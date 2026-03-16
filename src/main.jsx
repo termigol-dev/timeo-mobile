@@ -11,15 +11,29 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+/* -----------------------------
+   SERVICE WORKER
+----------------------------- */
+
 if ("serviceWorker" in navigator) {
 
-  navigator.serviceWorker
-    .register("/sw.js")
-    .then(reg => {
-      console.log("Service Worker registrado", reg);
-    })
-    .catch(err => {
-      console.error("Error registrando SW", err);
-    });
+  window.addEventListener("load", () => {
+
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(reg => {
+
+        console.log("✅ SERVICE WORKER REGISTERED");
+        console.log(reg);
+
+      })
+      .catch(err => {
+
+        console.error("❌ SERVICE WORKER ERROR", err);
+
+      });
+
+  });
 
 }
