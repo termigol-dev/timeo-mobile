@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Login from './Login.jsx';
@@ -28,6 +28,37 @@ export default function App() {
     localStorage.removeItem('user');
     setUser(null);
   }
+
+  // REGISTRAR DISPOSITIVO CUANDO EL USUARIO ESTÁ LOGUEADO
+  useEffect(() => {
+
+    if (!user) return;
+
+    let deviceToken = localStorage.getItem('deviceToken');
+
+    if (!deviceToken) {
+      deviceToken = crypto.randomUUID();
+      localStorage.setItem('deviceToken', deviceToken);
+    }
+
+    const authToken = localStorage.getItem('token');
+    if (!authToken) return;
+
+    fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
+      },
+      body: JSON.stringify({
+        token: deviceToken,
+        platform: 'WEB'
+      })
+    }).catch(err => {
+      console.error('Error registering device:', err);
+    });
+
+  }, [user]);
 
   // LOGIN
   if (!user) {
