@@ -1,23 +1,20 @@
 self.addEventListener("push", function (event) {
 
-  console.log("PUSH RECEIVED");
-
-  let data = {};
+  let data = { title: "Timeo", body: "Notificación recibida" };
 
   if (event.data) {
-    data = event.data.json();
+    try {
+      data = event.data.json();
+    } catch {
+      data.body = event.data.text();
+    }
   }
 
-  const title = data.title || "Timeo";
-
-  const options = {
-    body: data.body || "Nueva notificación",
-    icon: "/icon-192.png",
-    badge: "/icon-192.png"
-  };
-
   event.waitUntil(
-    self.registration.showNotification(title, options)
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icon-192.png",
+      badge: "/icon-192.png"
+    })
   );
-
 });
