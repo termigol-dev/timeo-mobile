@@ -89,7 +89,11 @@ export default function App() {
 
     setUser(userFromBackend);
 
-    const authToken = localStorage.getItem('token');
+    const authToken = localStorage.getItem("token");
+    if (!authToken) {
+      console.log("NO AUTH TOKEN");
+      return;
+    }
 
     try {
 

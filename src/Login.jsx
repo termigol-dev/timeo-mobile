@@ -3,30 +3,45 @@ import { login } from './api.js';
 import Logo from "./components/Logo";
 
 export default function Login({ onLogin, dark, setDark }) {
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function submit(e) {
+
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
+
       const data = await login(email, password);
-      // 🔑 pasamos el user REAL al App
+
+      // 🔑 guardar token
+      localStorage.setItem("token", data.token);
+
+      // guardar usuario
+      localStorage.setItem("user", JSON.stringify(data.user));
+
       onLogin(data.user);
+
     } catch {
+
       setError('Credenciales incorrectas');
+
     } finally {
+
       setLoading(false);
+
     }
   }
 
   return (
     <div className="centered">
       <form className="card form" onSubmit={submit}>
+
         <div style={{
           display: "flex",
           justifyContent: "center",
@@ -69,6 +84,7 @@ export default function Login({ onLogin, dark, setDark }) {
           />
           <span>Modo oscuro</span>
         </label>
+
       </form>
     </div>
   );
