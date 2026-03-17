@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register('/sw-final.js?version=100')
+      .register('/sw-final.js?version=101')
       .then(reg => {
         console.log("✅ SW REGISTERED", reg);
       })
