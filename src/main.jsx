@@ -1,39 +1,73 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+// 🔥 IDENTIFICADOR CLARO (para saber si ES este SW)
+console.log("🔥 SW TIMEO CARGADO - VERSION FINAL");
 
-import App from './App.jsx';
+// =============================
+// INSTALL
+// =============================
+self.addEventListener('install', event => {
+  console.log('🟢 SW instalado');
+  self.skipWaiting();
+});
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
-);
+// =============================
+// ACTIVATE
+// =============================
+self.addEventListener('activate', event => {
+  console.log('🟢 SW activado');
+  event.waitUntil(self.clients.claim());
+});
 
-/* -----------------------------
-   SERVICE WORKER
------------------------------ */
+// =============================
+// PUSH
+// =============================
+self.addEventListener('push', function (event) {
 
-if ("serviceWorker" in navigator) {
+  console.log('🚨 PUSH EVENT DISPARADO');
 
-  window.addEventListener("load", () => {
+  let data = {};
 
-    navigator.serviceWorker
-      .register('/sw-final.js?version=6')
-      .then(reg => {
+  try {
+    if (event.data) {
+      data = event.data.json();
+    }
+  } catch (e) {
+    console.log('❌ ERROR parseando JSON', e);
+  }
 
-        console.log("✅ SERVICE WORKER REGISTERED");
-        console.log(reg);
+  console.log('📦 DATA RECIBIDA:', data);
 
+  const title = data.title || 'TIMEO';
+  const body = data.body || 'Notificación recibida';
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: 'timeo-notification', // evita duplicados raros
+      renotify: true
+    })
+  );
+});
+
+// =============================
+// CLICK EN NOTIFICACIÓN
+// =============================
+self.addEventListener('notificationclick', function (event) {
+
+  console.log('👆 NOTIFICACIÓN CLICKADA');
+
+  event.notification.close();
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then(clientList => {
+
+        if (clientList.length > 0) {
+          return clientList[0].focus();
+        }
+
+        return clients.openWindow('/');
       })
-      .catch(err => {
-
-        console.error("❌ SERVICE WORKER ERROR", err);
-
-      });
-
-  });
-
-}
+  );
+});
