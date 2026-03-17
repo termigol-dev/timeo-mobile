@@ -85,48 +85,61 @@ export default function App() {
 
   async function handleLogin(userFromBackend) {
 
-  console.log("LOGIN OK");
+    console.log("LOGIN OK");
 
-  const authToken = localStorage.getItem('token');
+    setUser(userFromBackend);
 
-  try {
+    const authToken = localStorage.getItem('token');
 
-    const subscription = await subscribeToPush();
+    try {
 
-    if (!subscription) {
-      console.log("NO SUBSCRIPTION");
-      setUser(userFromBackend);
-      return;
+      const registration = await navigator.serviceWorker.ready;
+
+      // 🔥 BORRAR suscripción vieja (CLAVE)
+      const oldSub = await registration.pushManager.getSubscription();
+      if (oldSub) {
+        console.log("🧹 eliminando suscripción vieja");
+        await oldSub.unsubscribe();
+      }
+
+      // 🔥 pedir permiso
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        console.log("❌ permiso denegado");
+        return;
+      }
+
+      // 🔥 crear nueva suscripción
+      const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
+      });
+
+      console.log("✅ NUEVA SUBSCRIPTION:", subscription);
+
+      // 🔥 enviarla al backend
+      await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          token: JSON.stringify(subscription),
+          platform: 'WEB'
+        })
+      });
+
+      console.log("📲 DEVICE REGISTRADO");
+
+    } catch (err) {
+
+      console.error("❌ ERROR PUSH:", err);
+
     }
-
-    console.log("PUSH SUBSCRIPTION:", subscription);
-
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`
-      },
-      body: JSON.stringify({
-        token: JSON.stringify(subscription),
-        platform: 'WEB'
-      })
-    });
-
-    const data = await res.json();
-
-    console.log("DEVICE REGISTERED:", data);
-
-    // 👇 IMPORTANTE: solo ahora activamos la app
-    setUser(userFromBackend);
-
-  } catch (err) {
-
-    console.error("DEVICE REGISTER ERROR:", err);
-    setUser(userFromBackend);
-
   }
-}
 
   /* -----------------------------
      LOGOUT
