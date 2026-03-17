@@ -1,20 +1,26 @@
 self.addEventListener("push", function (event) {
 
-  let text = "NO DATA";
+  console.log("🔥 PUSH EVENT:", event);
 
-  if (event.data) {
-    try {
-      text = event.data.text();
-    } catch (e) {
-      text = "ERROR READING DATA";
-    }
+  let data;
+
+  try {
+    data = event.data ? event.data.json() : null;
+  } catch (e) {
+    console.log("❌ JSON ERROR", e);
+    data = null;
   }
 
-  const message = "PUSH DEBUG → " + text;
+  console.log("📦 DATA:", data);
 
-  self.registration.showNotification("DEBUG TIMEO", {
-    body: message,
-    icon: "/icon-192.png",
-  });
+  const title = data?.title || "TIMEO DEFAULT";
+  const body = data?.body || "SIN CONTENIDO";
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: body,
+      icon: "/icon-192.png",
+    })
+  );
 
 });
