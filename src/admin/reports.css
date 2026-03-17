@@ -1,0 +1,383 @@
+/* ============================= */
+/* CONTENEDOR GENERAL INFORME */
+/* ============================= */
+
+.report-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ============================= */
+/* TARJETA SEMANA */
+/* ============================= */
+
+.report-week {
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  background: white;
+  padding: 16px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* cabecera semana */
+
+.report-week-header {
+  background: #12c3c3;
+  color: white;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ============================= */
+/* DIA */
+/* ============================= */
+
+.report-day {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.report-day:last-child {
+  border-bottom: none;
+}
+
+.report-day-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+/* ============================= */
+/* SECCIONES */
+/* ============================= */
+
+.report-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.report-empty {
+  font-size: 12px;
+  color: #888;
+}
+
+/* ============================= */
+/* REGISTROS */
+/* ============================= */
+
+.report-records {
+  margin-top: 4px;
+}
+
+.report-record {
+  margin-top: 3px;
+  display: grid;
+  grid-template-columns: 42px 55px auto;
+  align-items: center;
+  column-gap: 6px;
+  gap: 3px;
+}
+
+/* hora más legible */
+
+.report-time {
+  font-size: 15px;
+  font-weight: 500;
+
+}
+
+/* ============================= */
+/* BADGES IN / OUT */
+/* ============================= */
+
+.report-badge-in {
+  background: #16a34a;
+  color: white;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+}
+
+.report-badge-out {
+  background: #dc2626;
+  color: white;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+}
+
+/* ============================= */
+/* SHIFTS */
+/* ============================= */
+
+.report-shifts {
+  margin-top: 6px;
+  font-size: 13px;
+
+}
+
+/* ============================= */
+/* INCIDENTES */
+/* ============================= */
+
+.report-incidents {
+  margin-top: 6px;
+}
+
+.report-incident {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+/* punto incidencia */
+
+.incident-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: black;
+  margin-left: 0px;
+}
+
+
+/* colores */
+
+.incident-yellow {
+  background: #ede616;
+}
+
+.incident-orange {
+  background: #f97316;
+}
+
+.incident-red {
+  background: #dc2626;
+}
+
+/* ============================= */
+/* FILAS DEL INFORME */
+/* ============================= */
+
+.report-row {
+  display: grid;
+  grid-template-columns: 170px repeat(6, 120px);
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  break-inside: avoid;
+}
+
+/* centrar fichajes en su columna */
+
+.report-cell {
+  min-height: 32px;
+  width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* mensaje de exceso de fichajes */
+
+.report-warning {
+  grid-column: 2 / span 6;
+  font-size: 14px;
+  color: #ee7427;
+}
+
+.report-print-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.week-totals{
+  font-size:13px;
+  font-weight:500;
+}
+
+.report-main-header{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:8px;
+  margin-bottom:2px;
+}
+
+.report-main-header-right{
+  display:flex;
+  flex-direction:column;
+}
+
+.report-main-title{
+  margin-left:auto;
+  font-size:20px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+
+.report-main-employee{
+  font-size:18px;
+  font-weight:700;
+}
+
+.report-main-company{
+  font-size:14px;
+  color:#555;
+}
+
+.report-legend{
+  margin-top:14px;
+  font-size:11px;
+  page-break-inside:avoid;
+}
+
+
+/* ============================= */
+/* BADGE PORCENTAJE SEMANA */
+/* ============================= */
+
+.report-badge-percent {
+  color: white;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+}
+
+.report-badge-percent-green {
+  background: #16a34a;
+}
+
+.report-badge-percent-yellow {
+  background: #ede616;
+  color: #000;
+}
+
+.report-badge-percent-orange {
+  background: #f97316;
+}
+
+.report-badge-percent-red {
+  background: #dc2626;
+}
+
+/*IMPRIMIR*/
+.report-print-button{
+  background:none;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:4px;
+}
+
+.report-print-button span{
+  font-size:50px;
+  color:#444;
+}
+
+.report-print-button:hover span{
+  color:#000;
+}
+
+/*MESES Y CALENDARIO*/
+.report-month-navigation{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.report-month-navigation button{
+  background:#f3f4f6;
+  border:1px solid #ddd;
+  border-radius:6px;
+  padding:6px 10px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.report-month-navigation button:hover{
+  background:#e5e7eb;
+}
+
+.report-month-navigation input{
+  border:1px solid #ddd;
+  border-radius:6px;
+  padding:5px 8px;
+  font-size:14px;
+}
+
+/* ============================= */
+/* TOOLBAR INFORMES */
+/* ============================= */
+
+.report-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:2px;
+  margin-bottom:6px;
+}
+
+/* botones navegación */
+
+.report-nav-button{
+  background:#f5f5f5;
+  border:1px solid #ddd;
+  border-radius:6px;
+  padding:6px 12px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.report-nav-button:hover{
+  background:#e9e9e9;
+}
+
+/* selector mes */
+
+.report-month-picker{
+  border:1px solid #ddd;
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:14px;
+}

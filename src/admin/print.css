@@ -1,0 +1,144 @@
+/* =========================
+   PRINT SETTINGS
+========================= */
+
+@media print {
+  
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+  
+  body{
+    background:white !important;
+    font-size:12px;
+  }
+
+  /* ocultar UI */
+
+  button,
+  select,
+  input,
+  nav,
+  aside,
+  .reports-controls,
+  .reports-toolbar,
+  .report-filters,
+  .report-navigation{
+    display:none !important;
+  }
+
+  /* =====================
+     HEADER
+  ===================== */
+
+  .report-main-header{
+    gap:8px;
+  }
+
+  .report-main-header img{
+    height:14px;
+  }
+
+  .report-main-title{
+    font-size:13px;
+  }
+
+  /* =====================
+     GRID DE SEMANAS
+  ===================== */
+
+  .text-report-grid{
+    display:grid;
+    grid-template-rows:1fr 1fr;
+    gap:6px;
+    height:calc(100vh - 120px);
+  }
+
+  /* =====================
+     TARJETAS
+  ===================== */
+
+  .report-week{
+    height:calc((100vh - 300px)/2);
+    width:99%;
+    margin:0;
+    box-sizing:border-box;
+  }
+
+  .report-week:nth-of-type(2n){
+    page-break-after:always;
+  }
+
+  .report-week-header{
+    font-size:11px;
+    padding:6px 12px;
+    margin:-1px -1px 6px -1px;
+  }
+
+  /* =====================
+     DÍAS
+  ===================== */
+
+  .report-day{
+    font-size:12px;
+    padding:3px 0 !important;
+  }
+
+  .report-day-title{
+    font-size:13px;
+  }
+
+  /* =====================
+     FILAS
+  ===================== */
+
+  .report-row{
+    font-size:12px;
+  }
+
+  .report-cell{
+    min-height:28px !important;
+  }
+
+  /* =====================
+     BADGES
+  ===================== */
+
+  .report-badge-in,
+  .report-badge-out{
+    font-size:9px !important;
+    padding:2px 6px !important;
+    min-width:30px !important;
+  }
+
+  .report-time{
+    font-size:11px;
+  }
+
+  /* =====================
+     LEYENDA
+  ===================== */
+
+  .report-legend{
+    position:fixed;
+    bottom:12mm;
+    left:12mm;
+    right:12mm;
+    border-top:1px solid #ddd;
+    padding-top:4px;
+    font-size:8px;
+  }
+
+  /* colores correctos en impresión */
+
+  *{
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
+}
