@@ -381,3 +381,31 @@
   padding:6px 10px;
   font-size:14px;
 }
+
+/* 🔥 ARREGLAR TOOLBAR EN MÓVIL */
+
+.report-toolbar input:not([type='checkbox']) {
+  width: auto !important;
+}
+
+.report-month-navigation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+/* limitar tamaño del calendario */
+.report-month-picker {
+  max-width: 140px;
+}
+
+/* evitar salto del checkbox */
+.report-month-navigation label {
+  white-space: nowrap;
+}
+
+.report-toolbar button {
+  width: auto;
+}
+

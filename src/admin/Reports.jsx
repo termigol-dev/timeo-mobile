@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { getMyReports } from './api';
+import { getMyReports } from '../api';
 import { useParams } from 'react-router-dom';
 import ReportText from "./ReportText";
-import ReportGraph from "./ReportGraph";
-import Logo from "./components/Logo";
+import Logo from "../components/Logo";
+import "./reports.css";
+import "./print.css";
 
 
 
@@ -157,14 +158,16 @@ export default function Reports() {
   const [reportMode, setReportMode] = useState('detailed');
   const [simpleMode, setSimpleMode] = useState(false);
 
-  const { userId } = useParams();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
   const from = `${year}-${String(month + 1).padStart(2, '0')}-01`;
   const to = new Date(year, month + 1, 0).toISOString().slice(0, 10);
 
   useEffect(() => {
+    if (!userId) return; // 🔥 clave
     load();
-  }, [year, month]);
+  }, [year, month, userId]);
 
   async function load() {
 

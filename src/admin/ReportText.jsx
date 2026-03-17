@@ -1,5 +1,5 @@
 import React from "react";
-import Logo from "./components/Logo";
+import Logo from "../components/Logo";
 
 const INCIDENT_SHORT = {
     IN_EARLY: "IE",
