@@ -1,36 +1,32 @@
 self.addEventListener('install', event => {
-  console.log('SW instalado');
-  self.skipWaiting();
+console.log('SW instalado');
+self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  console.log('SW activado');
-  return self.clients.claim();
+console.log('SW activado');
+return self.clients.claim();
 });
+self.addEventListener("push", function (event) {
 
-self.addEventListener('push', function (event) {
+let data = null;
 
-  console.log('📩 PUSH RECIBIDO');
+try {
+if (event.data) {
+data = event.data.json();
+}
+} catch (e) {
+console.log("ERROR JSON", e);
+}
 
-  let data = {};
+const title = data?.title || "TIMEO FALLBACK";
+const body = data?.body || "SIN BODY";
 
-  try {
-    if (event.data) {
-      data = event.data.json();
-    }
-  } catch (e) {
-    console.log('❌ JSON ERROR', e);
-  }
+event.waitUntil(
+self.registration.showNotification(title, {
+body: body,
+icon: "/icon-192.png",
+})
+);
 
-  console.log('📦 DATA:', data);
-
-  const title = data.title || 'TIMEO';
-  const body = data.body || 'SIN CONTENIDO';
-
-  event.waitUntil(
-    self.registration.showNotification(title, {
-      body: body,
-      icon: '/icon-192.png',
-    })
-  );
 });
