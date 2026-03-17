@@ -21,7 +21,7 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
 
     navigator.serviceWorker
-      .register("/sw.js")
+      .register('/sw-final.js?version=6')
       .then(reg => {
 
         console.log("✅ SERVICE WORKER REGISTERED");
