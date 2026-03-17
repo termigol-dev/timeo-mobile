@@ -1,27 +1,30 @@
 self.addEventListener("push", function (event) {
 
-  console.log("📩 PUSH EVENT RAW:", event);
+  console.log("🔥 PUSH EVENT RECEIVED");
+  console.log("👉 RAW EVENT:", event);
 
-  let data = {
-    title: "Notificación",
-    body: "Sin contenido"
-  };
+  let data = { title: "Timeo DEBUG", body: "Sin datos" };
 
-  try {
-    if (event.data) {
-      data = event.data.json();
+  if (event.data) {
+    try {
+      const text = event.data.text();
+      console.log("📩 RAW TEXT:", text);
+
+      data = JSON.parse(text);
+      console.log("📦 PARSED JSON:", data);
+
+    } catch (e) {
+      console.log("❌ ERROR PARSING:", e);
     }
-  } catch (e) {
-    console.log("❌ Error parsing push:", e);
+  } else {
+    console.log("⚠️ NO DATA IN EVENT");
   }
-
-  console.log("📦 PUSH DATA:", data);
 
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
       icon: "/icon-192.png",
-      badge: "/icon-192.png",
+      badge: "/icon-192.png"
     })
   );
 
