@@ -1,3 +1,12 @@
+self.addEventListener('install', event => {
+  console.log('SW instalado');
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  console.log('SW activado');
+  event.waitUntil(self.clients.claim());
+});
 self.addEventListener("push", function (event) {
 
   let data = null;
