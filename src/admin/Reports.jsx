@@ -156,7 +156,7 @@ export default function Reports() {
   const [currentWeek, setCurrentWeek] = useState(0);
   const viewMode = 'text';
   const [reportMode, setReportMode] = useState('detailed');
-  const [simpleMode, setSimpleMode] = useState(false);
+  const [simpleMode, setSimpleMode] = useState(true);
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
@@ -321,17 +321,18 @@ export default function Reports() {
             Mes siguiente →
           </button>
 
+          {/* oculto en móvil 
           <div className="no-print" style={{ display: 'flex', alignItems: 'center', marginLeft: 20 }}>
+     
             <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <input
                 type="checkbox"
                 checked={simpleMode}
                 onChange={(e) => setSimpleMode(e.target.checked)}
               />
-              Modo Simplificado
             </label>
           </div>
-
+          */}
         </div>
 
         <button
