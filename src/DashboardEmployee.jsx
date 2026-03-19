@@ -21,10 +21,9 @@ export default function DashboardEmployee({
     loadHistory();
   }, []);
 
-  console.log('👤 user in DashboardEmployee', user);
-
   async function loadHistory() {
     setLoading(true);
+    console.log(user)
     try {
       const data = await getMyRecords();
       setHistory(Array.isArray(data) ? data.slice(0, 5) : []);
@@ -96,72 +95,100 @@ export default function DashboardEmployee({
   return (
     <div
       style={{
-        minHeight: '100vh',
-        padding: 20,
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 16,
         backgroundColor: bg,
         color: text,
         fontFamily: font,
+        overflow: 'hidden',
       }}
     >
-      {/* HEADER */}
-      <header className="admin-header">
-        <div className="header-left">
-          <button
-            className="dark-toggle-btn"
-            onClick={() => setDark(d => !d)}
-          >
-            <span className="toggle-icon">
-              {dark ? '🌙' : '☀️'}
-            </span>
-            <span>Modo oscuro</span>
-          </button>
-        </div>
 
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: 32
-        }}>
-          <Logo dark={dark} size={80} />
-        </div>
-        <div className="header-actions">
+      <header
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr auto 1fr',
+          alignItems: 'center',
+          marginBottom: 10,
+        }}
+      >
+
+        {/* IZQUIERDA */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 14,
+            fontSize: 14,
+            fontWeight: 600,
+          }}
+        >
+
+          {/* EMPRESA */}
+          <span style={{ color: 'var(--text-soft)' }}>
+            {user?.companyName || '—'}
+          </span>
+
+          {/* INFORMES */}
           <button
-            className="header-btn"
             onClick={() => navigate('/reports')}
+            className="header-btn"
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
           >
+            <span className="material-symbols-outlined">
+              analytics
+            </span>
             Informes
           </button>
 
+        </div>
+
+        {/* CENTRO */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Logo dark={dark} size={60} />
+        </div>
+
+        {/* DERECHA */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: 16,
+          }}
+        >
+
+          {/* DARK MODE */}
           <button
             className="header-btn"
-            onClick={() => alert('Perfil (pendiente)')}
+            onClick={() => setDark(d => !d)}
+            title="Modo oscuro"
           >
-            Mi perfil
+            <span className="material-symbols-outlined">
+              {dark ? 'dark_mode' : 'light_mode'}
+            </span>
           </button>
 
+          {/* SALIR */}
           <button
             className="header-btn logout"
             onClick={onLogout}
           >
             Salir
           </button>
+
         </div>
+
       </header>
 
-      {/* MENSAJE TEMPORAL (espacio fijo) */}
-      <div
-        style={{
-          height: 44,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: 20,
-        }}
-      >
+      {/* MENSAJE */}
+      <div className="employee-message-slot">
         {message && (
           <div
             style={{
-              padding: '8px 16px',
+              padding: '6px 14px',
               borderRadius: 12,
               fontWeight: 700,
               backgroundColor:
@@ -169,6 +196,7 @@ export default function DashboardEmployee({
                   ? 'var(--green)'
                   : 'var(--red)',
               color: 'white',
+              fontSize: 14
             }}
           >
             {message.text}
@@ -176,61 +204,67 @@ export default function DashboardEmployee({
         )}
       </div>
 
-      {/* FOTO + NOMBRE */}
-      <div
-        className={`employee-photo-wrapper ${isIn ? 'status-in' : 'status-out'
-          }`}
-        style={{ marginBottom: 28 }}
-      >
-        {user?.photoUrl ? (
-          <img
-            src={user.photoUrl}
-            alt="Foto empleado"
-            className="employee-photo"
-          />
-        ) : (
-          <div className="employee-photo placeholder">
-            <span className="avatar-icon">👤</span>
-            <span className="avatar-initials">
-              {getInitials(user?.name)}
-            </span>
-          </div>
-        )}
-      </div>
+      {/* CONTENIDO */}
+      <div style={{ textAlign: 'center' }}>
 
-      {/* NOMBRE COMPLETO */}
-      <div
-        style={{
-          textAlign: 'center',
-          fontWeight: 700,
-          fontSize: 18,
-          marginBottom: 32,
-        }}
-      >
-        {user?.name}
-      </div>
-
-      {/* BOTONES IN / OUT */}
-      <div className="employee-actions">
-        <button
-          onClick={handleIn}
-          disabled={isIn}
-          className="employee-btn in"
+        <div
+          className={`employee-photo-wrapper ${isIn ? 'status-in' : 'status-out'}`}
+          style={{ marginBottom: 16 }}
         >
-          IN
-        </button>
+          {user?.photoUrl ? (
+            <img
+              src={user.photoUrl}
+              alt="Foto empleado"
+              className="employee-photo"
+            />
+          ) : (
+            <div className="employee-photo placeholder">
+              <span className="avatar-icon">👤</span>
+              <span className="avatar-initials">
+                {getInitials(user?.name)}
+              </span>
+            </div>
+          )}
+        </div>
 
-        <button
-          onClick={handleOut}
-          disabled={!isIn}
-          className="employee-btn out"
+        <div
+          style={{
+            fontWeight: 700,
+            fontSize: 16,
+            marginBottom: 20,
+          }}
         >
-          OUT
-        </button>
+          {user?.name} {user?.lastName}
+        </div>
+
+        <div className="employee-actions" style={{ margin: "20px 0" }}>
+          <button
+            onClick={handleIn}
+            disabled={isIn}
+            className="employee-btn in"
+          >
+            IN
+          </button>
+
+          <button
+            onClick={handleOut}
+            disabled={!isIn}
+            className="employee-btn out"
+          >
+            OUT
+          </button>
+        </div>
       </div>
 
       {/* HISTORIAL */}
-      <div style={{ display: 'grid', gap: 12 }}>
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          marginTop: 10,
+          paddingRight: 4
+        }}
+      >
         {loading ? (
           <div style={{ textAlign: 'center', color: muted }}>
             Cargando…
@@ -242,16 +276,17 @@ export default function DashboardEmployee({
               style={{
                 backgroundColor: card,
                 borderRadius: 16,
-                padding: 16,
+                padding: 12,
                 display: 'flex',
                 justifyContent: 'space-between',
+                marginBottom: 10
               }}
             >
               <div>
                 <strong style={{ color: '#22c55e' }}>
                   Entrada
                 </strong>
-                <div style={{ fontSize: 14, color: muted }}>
+                <div style={{ fontSize: 13, color: muted }}>
                   {new Date(row.in.createdAt).toLocaleString()}
                 </div>
               </div>
@@ -261,7 +296,7 @@ export default function DashboardEmployee({
                   <strong style={{ color: '#ef4444' }}>
                     Salida
                   </strong>
-                  <div style={{ fontSize: 14, color: muted }}>
+                  <div style={{ fontSize: 13, color: muted }}>
                     {new Date(row.out.createdAt).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -273,6 +308,7 @@ export default function DashboardEmployee({
           ))
         )}
       </div>
+
     </div>
   );
 }
