@@ -135,12 +135,17 @@ export default function DashboardEmployee({
           <button
             onClick={() => navigate('/reports')}
             className="header-btn"
-            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            title="Informes"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0
+            }}
           >
             <span className="material-symbols-outlined">
               analytics
             </span>
-            Informes
           </button>
 
         </div>
