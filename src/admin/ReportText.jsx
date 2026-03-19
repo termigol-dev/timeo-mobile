@@ -88,6 +88,14 @@ export default function ReportText({
                         ins: [],
                         outs: []
                     }));
+                      /*hello*/
+                    if (shiftRows.length === 0 && records.length > 0) {
+                        shiftRows.push({
+                            shift: { startTime: "--", endTime: "--" },
+                            ins: [],
+                            outs: []
+                        });
+                    }
 
                     records.forEach(r => {
 
