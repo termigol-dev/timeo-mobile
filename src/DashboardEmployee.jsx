@@ -172,7 +172,7 @@ export default function DashboardEmployee({
             title="Modo oscuro"
           >
             <span className="material-symbols-outlined">
-              {dark ? 'dark_mode' : 'light_mode'}
+              dark_mode
             </span>
           </button>
 
@@ -196,9 +196,10 @@ export default function DashboardEmployee({
               padding: '6px 14px',
               borderRadius: 12,
               fontWeight: 700,
-              backgroundColor:
+              backgroundColor: 'transparent',
+              color:
                 message.type === 'IN'
-                  ? 'var(--green)'
+                  ? 'var(--primary)'   // turquesa
                   : 'var(--red)',
               color: 'white',
               fontSize: 14
