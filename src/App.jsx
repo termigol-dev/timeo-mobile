@@ -43,43 +43,6 @@ export default function App() {
   }
 
   /* -----------------------------
-     SUSCRIPCIÓN A PUSH
-  ----------------------------- */
-
-  async function subscribeToPush() {
-
-    if (!("serviceWorker" in navigator)) return null;
-
-    const registration = await navigator.serviceWorker.ready;
-
-    const permission = await Notification.requestPermission();
-
-    if (permission !== "granted") {
-      console.log("Push permission denied");
-      return null;
-    }
-
-    console.log("SUBSCRIBING TO PUSH");
-
-    let subscription = await registration.pushManager.getSubscription();
-
-    if (!subscription) {
-
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          import.meta.env.VITE_VAPID_PUBLIC_KEY
-        )
-      });
-
-    }
-
-    console.log("SUBSCRIPTION CREATED", subscription);
-
-    return subscription;
-  }
-
-  /* -----------------------------
      LOGIN
   ----------------------------- */
 
@@ -93,33 +56,41 @@ export default function App() {
 
     try {
 
+      if (!("serviceWorker" in navigator)) return;
+
       const registration = await navigator.serviceWorker.ready;
 
-      // 🔥 BORRAR suscripción vieja (CLAVE)
-      const oldSub = await registration.pushManager.getSubscription();
-      if (oldSub) {
-        console.log("🧹 eliminando suscripción vieja");
-        await oldSub.unsubscribe();
-      }
-
-      // 🔥 pedir permiso
+      // 🔥 pedir permiso UNA sola vez
       const permission = await Notification.requestPermission();
+
       if (permission !== "granted") {
         console.log("❌ permiso denegado");
         return;
       }
 
-      // 🔥 crear nueva suscripción
-      const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+      // 🔍 comprobar si ya existe suscripción
+      let subscription = await registration.pushManager.getSubscription();
 
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-      });
+      if (!subscription) {
 
-      console.log("✅ NUEVA SUBSCRIPTION:", subscription);
+        console.log("🆕 creando nueva suscripción");
 
-      // 🔥 enviarla al backend
+        const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidKey),
+        });
+
+      } else {
+
+        console.log("♻️ reutilizando suscripción existente");
+
+      }
+
+      console.log("📦 SUBSCRIPTION:", subscription);
+
+      // 🔥 enviar SIEMPRE al backend (clave para sincronizar)
       await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
         method: 'POST',
         headers: {
@@ -132,7 +103,7 @@ export default function App() {
         })
       });
 
-      console.log("📲 DEVICE REGISTRADO");
+      console.log("📲 DEVICE REGISTRADO / ACTUALIZADO");
 
     } catch (err) {
 
