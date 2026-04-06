@@ -45,24 +45,52 @@ export default function DashboardEmployee({
   const muted = dark ? '#94a3b8' : '#64748b';
 
   async function handleIn() {
-    const now = new Date().toISOString();
+  try {
     await recordIn();
 
-    setHistory(prev => [{ type: 'IN', createdAt: now }, ...prev]);
     setMessage({ text: 'Entrada registrada', type: 'IN' });
 
+  } catch (err) {
+
+    const msg =
+      err?.response?.data?.message ||
+      err?.message ||
+      'Error al fichar entrada';
+
+    setMessage({ text: msg, type: 'OUT' });
+
+  } finally {
+
+    // 🔥 CLAVE → SIEMPRE refrescar estado real
+    await loadHistory();
+
     setTimeout(() => setMessage(null), 5000);
   }
+}
 
   async function handleOut() {
-    const now = new Date().toISOString();
+  try {
     await recordOut();
 
-    setHistory(prev => [{ type: 'OUT', createdAt: now }, ...prev]);
     setMessage({ text: 'Salida registrada', type: 'OUT' });
+
+  } catch (err) {
+
+    const msg =
+      err?.response?.data?.message ||
+      err?.message ||
+      'Error al fichar salida';
+
+    setMessage({ text: msg, type: 'OUT' });
+
+  } finally {
+
+    // 🔥 CLAVE → SIEMPRE refrescar estado real
+    await loadHistory();
 
     setTimeout(() => setMessage(null), 5000);
   }
+}
 
   function getInitials(name) {
     if (!name) return '👤';
