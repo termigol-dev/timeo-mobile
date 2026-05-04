@@ -25,7 +25,10 @@ export default function Login({ onLogin, dark, setDark }) {
       // guardar usuario
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      onLogin(data.user);
+      onLogin({
+  user: data.user,
+  token: data.token
+});
 
     } catch {
 

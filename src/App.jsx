@@ -46,13 +46,15 @@ export default function App() {
      LOGIN
   ----------------------------- */
 
-  async function handleLogin(userFromBackend) {
+  async function handleLogin({ user, token }) {
 
     console.log("LOGIN OK");
 
-    setUser(userFromBackend);
+    // 🔥 guardar aquí seguro
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
 
-    const authToken = localStorage.getItem('token');
+    setUser(user);
 
     try {
 
@@ -60,7 +62,6 @@ export default function App() {
 
       const registration = await navigator.serviceWorker.ready;
 
-      // 🔥 pedir permiso UNA sola vez
       const permission = await Notification.requestPermission();
 
       if (permission !== "granted") {
@@ -68,7 +69,6 @@ export default function App() {
         return;
       }
 
-      // 🔍 comprobar si ya existe suscripción
       let subscription = await registration.pushManager.getSubscription();
 
       if (!subscription) {
@@ -90,12 +90,12 @@ export default function App() {
 
       console.log("📦 SUBSCRIPTION:", subscription);
 
-      // 🔥 enviar SIEMPRE al backend (clave para sincronizar)
+      // 🔥 usar el token directo (NO localStorage)
       await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           token: JSON.stringify(subscription),
@@ -111,7 +111,6 @@ export default function App() {
 
     }
   }
-
   /* -----------------------------
      LOGOUT
   ----------------------------- */
