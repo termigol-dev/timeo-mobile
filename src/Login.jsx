@@ -17,7 +17,10 @@ export default function Login({ onLogin, dark, setDark }) {
 
     try {
 
-      const data = await login(email, password);
+     const data = await login(email, password);
+
+
+console.log("RESPUESTA LOGIN:", data); 
 
       // 🔑 guardar token
       localStorage.setItem("token", data.token);

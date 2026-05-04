@@ -12,7 +12,21 @@ export default function App() {
     localStorage.getItem('dark_mode') === 'true'
   );
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+  const storedUser = localStorage.getItem('user');
+
+  if (storedUser && storedUser !== "undefined") {
+    try {
+      return JSON.parse(storedUser);
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+});
+
+  
 
   useLayoutEffect(() => {
     document.body.classList.toggle('dark', dark);
@@ -48,69 +62,75 @@ export default function App() {
 
   async function handleLogin({ user, token }) {
 
-    console.log("LOGIN OK");
+  console.log("LOGIN OK");
 
-    // 🔥 guardar aquí seguro
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+  // 🔥 guardar sesión
+  localStorage.setItem('token', token);
+  localStorage.setItem('user', JSON.stringify(user));
 
-    setUser(user);
+  setUser(user);
 
-    try {
+  try {
 
-      if (!("serviceWorker" in navigator)) return;
+    if (!("serviceWorker" in navigator)) return;
 
-      const registration = await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.ready;
 
-      const permission = await Notification.requestPermission();
+    const permission = await Notification.requestPermission();
 
-      if (permission !== "granted") {
-        console.log("❌ permiso denegado");
-        return;
-      }
+    if (permission !== "granted") {
+      console.log("❌ permiso denegado");
+      return;
+    }
 
-      let subscription = await registration.pushManager.getSubscription();
+    let subscription = await registration.pushManager.getSubscription();
 
-      if (!subscription) {
+    if (!subscription) {
+      console.log("🆕 creando nueva suscripción");
 
-        console.log("🆕 creando nueva suscripción");
+      const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
-        const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidKey),
-        });
-
-      } else {
-
-        console.log("♻️ reutilizando suscripción existente");
-
-      }
-
-      console.log("📦 SUBSCRIPTION:", subscription);
-
-      // 🔥 usar el token directo (NO localStorage)
-      await fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          token: JSON.stringify(subscription),
-          platform: 'WEB'
-        })
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
       });
 
-      console.log("📲 DEVICE REGISTRADO / ACTUALIZADO");
-
-    } catch (err) {
-
-      console.error("❌ ERROR PUSH:", err);
-
+    } else {
+      console.log("♻️ reutilizando suscripción existente");
     }
+
+    console.log("📦 SUBSCRIPTION:", subscription);
+
+    // 🔥 IMPORTANTE: no usar await → no bloquea login
+    fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        token: JSON.stringify(subscription),
+        platform: 'WEB'
+      })
+    })
+    .then(res => {
+      if (!res.ok) {
+        console.error("❌ Device no registrado:", res.status);
+        return;
+      }
+      console.log("📲 DEVICE REGISTRADO");
+    })
+    .catch(err => {
+      console.error("❌ Error device:", err);
+    });
+
+  } catch (err) {
+
+    console.error("❌ ERROR PUSH:", err);
+
   }
+}
+
   /* -----------------------------
      LOGOUT
   ----------------------------- */
