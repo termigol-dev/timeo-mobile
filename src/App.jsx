@@ -13,20 +13,18 @@ export default function App() {
   );
 
   const [user, setUser] = useState(() => {
-  const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user');
 
-  if (storedUser && storedUser !== "undefined") {
-    try {
-      return JSON.parse(storedUser);
-    } catch {
-      return null;
+    if (storedUser && storedUser !== "undefined") {
+      try {
+        return JSON.parse(storedUser);
+      } catch {
+        return null;
+      }
     }
-  }
 
-  return null;
-});
-
-  
+    return null;
+  });
 
   useLayoutEffect(() => {
     document.body.classList.toggle('dark', dark);
@@ -60,76 +58,75 @@ export default function App() {
      LOGIN
   ----------------------------- */
 
-  async function handleLogin({ user, token }) {
+  async function handleLogin(data) {
 
-  console.log("LOGIN OK");
+    console.log("LOGIN RESPONSE:", data);
 
-  // 🔥 guardar sesión
-  localStorage.setItem('token', token);
-  localStorage.setItem('user', JSON.stringify(user));
+    const { user, token } = data;
 
-  setUser(user);
+    // 🔥 guardar sesión
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
 
-  try {
+    setUser(user);
 
-    if (!("serviceWorker" in navigator)) return;
+    try {
 
-    const registration = await navigator.serviceWorker.ready;
+      if (!("serviceWorker" in navigator)) return;
 
-    const permission = await Notification.requestPermission();
+      const registration = await navigator.serviceWorker.ready;
 
-    if (permission !== "granted") {
-      console.log("❌ permiso denegado");
-      return;
-    }
+      const permission = await Notification.requestPermission();
 
-    let subscription = await registration.pushManager.getSubscription();
-
-    if (!subscription) {
-      console.log("🆕 creando nueva suscripción");
-
-      const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
-
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-      });
-
-    } else {
-      console.log("♻️ reutilizando suscripción existente");
-    }
-
-    console.log("📦 SUBSCRIPTION:", subscription);
-
-    // 🔥 IMPORTANTE: no usar await → no bloquea login
-    fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        token: JSON.stringify(subscription),
-        platform: 'WEB'
-      })
-    })
-    .then(res => {
-      if (!res.ok) {
-        console.error("❌ Device no registrado:", res.status);
+      if (permission !== "granted") {
+        console.log("❌ permiso denegado");
         return;
       }
-      console.log("📲 DEVICE REGISTRADO");
-    })
-    .catch(err => {
-      console.error("❌ Error device:", err);
-    });
 
-  } catch (err) {
+      let subscription = await registration.pushManager.getSubscription();
 
-    console.error("❌ ERROR PUSH:", err);
+      if (!subscription) {
+        console.log("🆕 creando nueva suscripción");
 
+        const vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
+
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidKey),
+        });
+
+      } else {
+        console.log("♻️ reutilizando suscripción existente");
+      }
+
+      console.log("📦 SUBSCRIPTION:", subscription);
+
+      fetch(`${import.meta.env.VITE_API_URL}/devices/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          token: JSON.stringify(subscription),
+          platform: 'WEB'
+        })
+      })
+      .then(res => {
+        if (!res.ok) {
+          console.error("❌ Device no registrado:", res.status);
+          return;
+        }
+        console.log("📲 DEVICE REGISTRADO");
+      })
+      .catch(err => {
+        console.error("❌ Error device:", err);
+      });
+
+    } catch (err) {
+      console.error("❌ ERROR PUSH:", err);
+    }
   }
-}
 
   /* -----------------------------
      LOGOUT
@@ -176,9 +173,7 @@ export default function App() {
 
       <Route
         path="/reports"
-        element={
-          <Reports user={user} />
-        }
+        element={<Reports user={user} />}
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />

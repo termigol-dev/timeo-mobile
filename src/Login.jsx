@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { login } from './api.js';
 import Logo from "./components/Logo";
+import PrivacyModal from "./components/PrivacyModal"; // 🔥 ESTE ES EL BUENO
 
 export default function Login({ onLogin, dark, setDark }) {
 
@@ -8,6 +9,8 @@ export default function Login({ onLogin, dark, setDark }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [privacyData, setPrivacyData] = useState(null);
 
   async function submit(e) {
 
@@ -17,21 +20,24 @@ export default function Login({ onLogin, dark, setDark }) {
 
     try {
 
-     const data = await login(email, password);
+      const data = await login(email, password);
 
+      console.log("RESPUESTA LOGIN:", data);
 
-console.log("RESPUESTA LOGIN:", data); 
+      // 🔥 PRIVACIDAD
+      if (data.requiresPrivacyAcceptance) {
+        setPrivacyData(data);
+        return;
+      }
 
-      // 🔑 guardar token
+      // ✅ LOGIN NORMAL
       localStorage.setItem("token", data.token);
-
-      // guardar usuario
       localStorage.setItem("user", JSON.stringify(data.user));
 
       onLogin({
-  user: data.user,
-  token: data.token
-});
+        user: data.user,
+        token: data.token
+      });
 
     } catch {
 
@@ -42,6 +48,23 @@ console.log("RESPUESTA LOGIN:", data);
       setLoading(false);
 
     }
+  }
+
+  // 🔥 MODAL PRIVACIDAD (MISMO QUE ADMIN)
+  if (privacyData) {
+    return (
+      <PrivacyModal
+        userId={privacyData.userId}
+        email={email}
+        password={password}
+        onAccepted={(data) => {
+          onLogin({
+            user: data.user,
+            token: data.token
+          });
+        }}
+      />
+    );
   }
 
   return (
