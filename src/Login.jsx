@@ -24,6 +24,18 @@ export default function Login({ onLogin, dark, setDark }) {
 
       console.log("RESPUESTA LOGIN:", data);
 
+      // 🔥 EMPRESA EXPIRADA
+      if (
+        data?.user?.companyStatus === 'EXPIRED'
+      ) {
+
+        setError(
+          'La cuenta de tu empresa no está activa. Contacta con el administrador para reactivar el servicio.'
+        );
+
+        return;
+      }
+
       // 🔥 PRIVACIDAD
       if (data.requiresPrivacyAcceptance) {
         setPrivacyData(data);
@@ -31,8 +43,15 @@ export default function Login({ onLogin, dark, setDark }) {
       }
 
       // ✅ LOGIN NORMAL
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem(
+        "token",
+        data.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
 
       onLogin({
         user: data.user,
@@ -41,7 +60,9 @@ export default function Login({ onLogin, dark, setDark }) {
 
     } catch {
 
-      setError('Credenciales incorrectas');
+      setError(
+        'Credenciales incorrectas'
+      );
 
     } finally {
 
