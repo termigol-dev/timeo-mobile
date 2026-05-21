@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { login } from './api.js';
 import Logo from "./components/Logo";
-import PrivacyModal from "../../timeo-admin/src/components/PrivacyModal.jsx"; // 🔥 ESTE ES EL BUENO
+import PrivacyModal from "../../timeo-mobile/src/components/PrivacyModal.jsx"; // 🔥 ESTE ES EL BUENO
 
 export default function Login({ onLogin, dark, setDark }) {
 
